@@ -12,14 +12,22 @@ public class UITicTacToe : MonoBehaviour {
 	[SerializeField] private GameObject[] buttons;
 	[SerializeField] private bool[] buttonsClicked;
 	[SerializeField] private GameObject[] pieces;
+	[SerializeField] private GameObject playButton;
+	[SerializeField] private GameObject trainButton;
+	[SerializeField] private Color red;
+	[SerializeField] private Color green;
 	[SerializeField] private Camera camera;
 	[SerializeField] private Sprite X;
 	[SerializeField] private Sprite O;
 	private TicTacToe game;
-	private char[] gameBoard;
+	[SerializeField] private char[] gameBoard;
 	private Monster player1;
 	private Monster player2;
-	private char currentPlayer;
+	[SerializeField] private char currentPlayer;
+	[SerializeField] private bool train;
+	[SerializeField] private bool play;
+	[SerializeField] private const float timeBetweenTurns = 1f;
+	[SerializeField] private float timeUntilMove;
 
 	public void Initialize(Monster player1, Monster player2){
 		this.game = new TicTacToe(player1, player2);
@@ -27,6 +35,7 @@ public class UITicTacToe : MonoBehaviour {
 		this.player1 = player1;
 		this.player2 = player2;
 		this.currentPlayer = 'X';
+		this.timeUntilMove = timeBetweenTurns;
 		this.neuralNetworkView = Instantiate(neuralNetworkView, Vector3.zero, Quaternion.identity);
 		this.neuralNetworkView.GetComponent<NeuralNetworkView>().setNeuralNetwork(player1.getGameNetwork(game.getGameName()), "top-left");
 	}
@@ -52,8 +61,24 @@ public class UITicTacToe : MonoBehaviour {
 		}
 	}
 
+	public void togglePlay(){
+		play = !play;
+
+		if(play) playButton.GetComponent<Image>().color = green;
+		else playButton.GetComponent<Image>().color = red;
+	}
+
+	public void toggleTrain(){
+		train = !train;
+
+		if(train) trainButton.GetComponent<Image>().color = green;
+		else trainButton.GetComponent<Image>().color = red;
+	}
+
 	void Start () {
 		this.game = null;
+		this.train = false;
+		this.play = true;
 		this.buttonsClicked = Functions.initArray(9, false);
 		this.camera = GameObject.Find("Main Camera").GetComponent<Camera>();
 		this.gameObject.GetComponent<Canvas>().worldCamera = camera;
@@ -64,15 +89,21 @@ public class UITicTacToe : MonoBehaviour {
 	}
 	
 	void Update () {
-		if(game != null){
+		if(game != null && play && timeUntilMove < 0.0f){
 			if(currentPlayer == '-'){
-				for(int i = 0; i < buttonsClicked.Length; i++){
-					if(buttonsClicked[i]){
-						game.train(Functions.map((x => x ? 1.0f : -1.0f), buttonsClicked));
-						updateTerminal("");
-						currentPlayer = 'O';
-						i = buttonsClicked.Length;
+				if(train){
+					for(int i = 0; i < buttonsClicked.Length; i++){
+						if(buttonsClicked[i]){
+							game.train(Functions.map((x => x ? 1.0f : -1.0f), buttonsClicked));
+							updateTerminal("");
+							currentPlayer = 'O';
+							i = buttonsClicked.Length;
+						}
 					}
+				}
+				else{
+					updateTerminal("");
+					currentPlayer = 'O';
 				}
 			}
 
@@ -82,7 +113,7 @@ public class UITicTacToe : MonoBehaviour {
 					game.takeTurn(currentPlayer);
 					updateBoard();
 					currentPlayer = '-';
-					updateTerminal("Choose correct move");
+					if(train) updateTerminal("Choose correct move");
 				}
 				else if(currentPlayer == 'O'){
 					game.takeTurn(currentPlayer);
@@ -107,6 +138,10 @@ public class UITicTacToe : MonoBehaviour {
 						break;
 				}
 			}
+			timeUntilMove = timeBetweenTurns;
+		}
+		else{
+			timeUntilMove -= Time.deltaTime;
 		}
 	}
 

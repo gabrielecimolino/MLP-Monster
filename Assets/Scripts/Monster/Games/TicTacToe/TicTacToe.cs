@@ -11,10 +11,10 @@ public class TicTacToe : MonsterGame {
 		this.gameName = "Tic Tac Toe";
 		this.gameOver = false;
 
-		if(!player1.hasGameNetwork(gameName)) player1.addGameNetwork(gameName, 9, 9);
+		if(!player1.hasGameNetwork(gameName)) player1.addGameNetwork(gameName, 9, new int[]{9}, 9);
 		this.player1 = player1.getGameNetwork(gameName);
 		
-		if(!player2.hasGameNetwork(gameName)) player2.addGameNetwork(gameName, 9, 9);
+		if(!player2.hasGameNetwork(gameName)) player2.addGameNetwork(gameName, 9, new int[]{9}, 9);
 		this.player2 = player2.getGameNetwork(gameName);
 	}
 

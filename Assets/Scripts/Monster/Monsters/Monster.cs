@@ -24,6 +24,11 @@ public abstract class Monster : MonoBehaviour, IPrintable {
 	public virtual void addGameNetwork(string gameName, int inputs, int outputs, int retention = 0){
 		gameNetworks.Add(new GameNetwork(gameName, inputs, outputs, retention));
 	}
+
+	public virtual void addGameNetwork(string gameName, int inputs, int[] hiddenLayerSizes, int outputs, int retention = 0){
+		gameNetworks.Add(new GameNetwork(gameName, inputs, hiddenLayerSizes, outputs, retention));
+	}
+
 	public virtual string print(){
 		return monsterName + " Games played: " + Functions.print(Functions.map((x => x.getGameName()), gameNetworks.ToArray()));
 	}
@@ -51,6 +56,14 @@ public class GameNetwork : IPrintable {
 		this.network.randomizeWeights(0.1f);
 		this.network.randomizeBiases(0.1f);
 	}
+
+	public GameNetwork(string gameName, int inputs, int[] hiddenLayerSizes, int outputs, int retention = 0){
+		this.gameName = gameName;
+		this.network = new NeuralNetwork(inputs, hiddenLayerSizes, outputs, retention);
+		this.network.randomizeWeights(0.1f);
+		this.network.randomizeBiases(0.1f);
+	}
+
 	public string print(){
 		return gameName + ": " + network.print();
 	}

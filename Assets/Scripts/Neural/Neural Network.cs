@@ -16,26 +16,26 @@ public class NeuralNetwork : IPrintable {
 		this.retention = 0;
 	}
 
-	public NeuralNetwork(int inputs, int outputs, int retention = 0) : this(inputs, new List<int>(), outputs, retention){
+	public NeuralNetwork(int inputs, int outputs, int retention = 0) : this(inputs, new int[]{}, outputs, retention){
 	}
 
-	public NeuralNetwork(int inputs, List<int> hiddenLayerSizes, int outputs, int retention = 0){
+	public NeuralNetwork(int inputs, int[] hiddenLayerSizes, int outputs, int retention = 0){
 		this.layers = new List<NeuralNetworkLayer>();
 		this.memories = new List<Memory>();
 		this.retention = retention;
 
-		if(hiddenLayerSizes.Count > 0){
+		if(hiddenLayerSizes.Length > 0){
 			layers.Add(new NeuralNetworkLayer(inputs, hiddenLayerSizes[0], activationFunction: "hyperTangent"));
 		}
 
 		//Build hidden layers
-		for(int i = 1; i < hiddenLayerSizes.Count; i++){
+		for(int i = 1; i < hiddenLayerSizes.Length; i++){
 			layers.Add(new NeuralNetworkLayer(hiddenLayerSizes[i - 1], hiddenLayerSizes[i], activationFunction: "hyperTangent"));
 		}
 
 		//Build output layer
-		if(hiddenLayerSizes.Count > 0){
-			layers.Add(new NeuralNetworkLayer(hiddenLayerSizes[hiddenLayerSizes.Count - 1], outputs, activationFunction: "sigmoid"));
+		if(hiddenLayerSizes.Length > 0){
+			layers.Add(new NeuralNetworkLayer(hiddenLayerSizes[hiddenLayerSizes.Length - 1], outputs, activationFunction: "sigmoid"));
 		}
 		else{
 			layers.Add(new NeuralNetworkLayer(inputs, outputs, activationFunction: "sigmoid"));
