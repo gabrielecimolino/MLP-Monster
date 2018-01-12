@@ -41,7 +41,6 @@ public class UITicTacToe : MonoBehaviour {
 	}
 
 	public void click(int button){
-		Debug.Log("Click: " + button.ToString());
 		buttonsClicked[button] = true;
 	}
 
